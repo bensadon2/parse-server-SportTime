@@ -7,7 +7,7 @@ Parse.Cloud.define('deleteFollowed', function(req, res) {
 	//add implementation if we want to cleanup this thing
 });
 
-Parse.Cloud.define('pingReply', function(request, response) {
+Parse.Cloud.define('pushScheduleChanged', function(request, response) {
     var params = request.params;
     var customData = params.customData;
 
@@ -16,15 +16,16 @@ Parse.Cloud.define('pingReply', function(request, response) {
     }
 
     var jsonData = JSON.parse(customData);
-    var sender = jsonData.sender;
-    var tourName = jsonData.tournamentName;
-    var query = new Parse.Query(Parse.Installation);
-    query.equalTo("installationId", sender);
+    var tournamentId = jsonData.tournamentId;
+    // var query = new Parse.Query(Parse.Installation);
+    // query.equalTo("installationId", sender);
 
     Parse.Push.send({
-        where: query,
+        // where: query,
         // Parse.Push requires a dictionary, not a string.
-        data: {"alert": "You created a tournament named: " + tourName}
+        channels: [tournamentId],
+        data: {"refreshSchedule": true,
+               "tournamentId": tournamentId}
     }, { success: function() {
         console.log("#### PUSH OK");
     }, error: function(error) {
