@@ -23,7 +23,7 @@ Parse.Cloud.define('pushScheduleChanged', function(request, response) {
     Parse.Push.send({
         // where: query,
         // Parse.Push requires a dictionary, not a string.
-        channels: [tournamentId.toString()],
+        channels: [tournamentId],
         data: {"refreshSchedule": true,
                "tournamentId": tournamentId}
     }, { success: function() {
