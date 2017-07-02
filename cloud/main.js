@@ -35,6 +35,55 @@ Parse.Cloud.define('pushScheduleChanged', function(request, response) {
     response.success('success');
 });
 
+Parse.Cloud.define('pushEventChanged', function(request, response) {
+    var params = request.params;
+    var customData = params.customData;
+
+    if (!customData) {
+        response.error("Missing customData!")
+    }
+
+    var jsonData = JSON.parse(customData);
+    var tournamentName = jsonData.tournamentName;
+    var eventId = jsonData.eventId;
+    var eventName = jsonData.eventName;
+    var userQuery = new Parse.Query(Parse.AppUser);
+    userQuery.equalTo("followedEvents", eventId);
+    var userIds = [];
+    userQuery.find({
+        success: function(results) {
+
+            for (var i = 0; i < results.length; i++) {
+                var object = results[i];
+                userIds.push(object.get("userId"));
+                // alert(object.id + ' - ' + object.get('playerName'));
+            }
+            // alert("Successfully retrieved " + results.length + " scores.");
+            // Do something with the returned Parse.Object values
+
+        },
+        error: function(error) {
+            // alert("Error: " + error.code + " " + error.message);
+        }
+    });
+    var query = new Parse.Query(Parse.Installation);
+    query.containedIn("userId", userIds);
+    // var query = new Parse.Query(Parse.Installation);
+    // query.equalTo("installationId", sender);
+
+    Parse.Push.send({
+        where: query,
+        // Parse.Push requires a dictionary, not a string.
+        data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
+    }, { success: function() {
+        console.log("#### PUSH OK");
+    }, error: function(error) {
+        console.log("#### PUSH ERROR" + error.message);
+    }, useMasterKey: true});
+
+    response.success('success');
+});
+
 Parse.Cloud.define('testPush', function(request, response) {
     var params = request.params;
     var customData = params.customData;
