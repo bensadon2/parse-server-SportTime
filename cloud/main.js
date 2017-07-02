@@ -59,7 +59,8 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
             }
 
             var query = new Parse.Query(Parse.Installation);
-            query.containedIn("userId", userIds);
+            // query.containedIn("userId", userIds);
+            query.containedIn("userId", ["101577857790860295282", "106250754053988585495"]);
 
             Parse.Push.send({
                 where: query,
