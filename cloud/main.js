@@ -56,12 +56,13 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
                 userIds.push(object.get("userId"));
-                alert(object.id + ' - ' + object.get('playerName'));
-                console.log(object.id + ' - ' + object.get('playerName'));
+                // alert(object.id + ' - ' + object.get('userId'));
+                // console.log(object.id + ' - ' + object.get('userId'));
+                console.log('\n' + 'found user: ' + object.get('userId'));
             }
         },
         error: function(error) {
-            alert("Error: " + error.code + " " + error.message);
+            // alert("Error: " + error.code + " " + error.message);
             console.log('Error: ' + error.code + " " + error.message);
         }
     });
