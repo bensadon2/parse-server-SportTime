@@ -48,7 +48,7 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
     var eventId = jsonData.eventId;
     var eventName = jsonData.eventName;
     // Failed attempt
-    var userQuery = new Parse.Query(Parse.AppUser);
+    var userQuery = new Parse.Query(AppUser);
     userQuery.equalTo("followedEvents", eventId);
     var userIds = [];
     userQuery.find({
