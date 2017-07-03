@@ -50,10 +50,11 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
     // Failed attempt
     var userQuery = new Parse.Query("AppUser");
     userQuery.equalTo("followedEvents", eventId);
-    var userIds = [];
+
     userQuery.find({
         success: function(results) {
             console.log('results was: ' + results + '\n');
+            var userIds = [];
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
                 userIds.push(object.get("userId"));
@@ -61,26 +62,27 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
                 // console.log(object.id + ' - ' + object.get('userId'));
                 console.log('\n' + 'found user: ' + object.get('userId'));
             }
+
+            console.log('user Ids were: ' + userIds);
+            var query = new Parse.Query(Parse.Installation);
+            query.containedIn("userId", userIds);
+            // query.containedIn("userId", ["101577857790860295282", "106250754053988585495"]);
+
+            Parse.Push.send({
+                where: query,
+                // Parse.Push requires a dictionary, not a string.
+                data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
+            }, { success: function() {
+                console.log("#### PUSH OK");
+            }, error: function(error) {
+                console.log("#### PUSH ERROR" + error.message);
+            }, useMasterKey: true});
         },
         error: function(error) {
             // alert("Error: " + error.code + " " + error.message);
             console.log('Error: ' + error.code + " " + error.message);
         }
     });
-    console.log('user Ids were: ' + userIds);
-    var query = new Parse.Query(Parse.Installation);
-    query.containedIn("userId", userIds);
-    // query.containedIn("userId", ["101577857790860295282", "106250754053988585495"]);
-
-    Parse.Push.send({
-        where: query,
-        // Parse.Push requires a dictionary, not a string.
-        data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
-    }, { success: function() {
-        console.log("#### PUSH OK");
-    }, error: function(error) {
-        console.log("#### PUSH ERROR" + error.message);
-    }, useMasterKey: true});
 
     //This worked with channels
     // Parse.Push.send({
