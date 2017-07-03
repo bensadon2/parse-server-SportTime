@@ -53,21 +53,19 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
 
     userQuery.find({
         success: function(results) {
-            console.log('results was: ' + results + '\n');
+            // console.log('results was: ' + results + '\n');
             var userIds = [];
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
                 userIds.push(object.get("userId"));
                 // alert(object.id + ' - ' + object.get('userId'));
                 // console.log(object.id + ' - ' + object.get('userId'));
-                console.log('\n' + 'found user: ' + object.get('userId'));
+                console.log('\n' + 'found user: ' + object.get("userId"));
             }
 
             console.log('user Ids were: ' + userIds);
-            var query = new Parse.Query(Parse.Installation);
+            var query = new Parse.Query("_Installation");
             query.containedIn("userId", userIds);
-            // query.containedIn("userId", ["101577857790860295282", "106250754053988585495"]);
-
             Parse.Push.send({
                 where: query,
                 // Parse.Push requires a dictionary, not a string.
@@ -97,6 +95,57 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
 
     // var query = new Parse.Query(Parse.Installation);
     // query.equalTo("installationId", sender);
+
+    response.success('success');
+});
+
+Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
+    var params = request.params;
+    var customData = params.customData;
+
+    if (!customData) {
+        response.error("Missing customData!")
+    }
+
+    var jsonData = JSON.parse(customData);
+    var tournamentName = jsonData.tournamentName;
+    var competitorId = jsonData.competitorId;
+    var competitorName = jsonData.competitorName;
+    var eventName = jsonData.eventName;
+    // Failed attempt
+    var userQuery = new Parse.Query("AppUser");
+    userQuery.equalTo("followedCompetitors", competitorId);
+    userQuery.find({
+        success: function(results) {
+            // console.log('results was: ' + results + '\n');
+            var userIds = [];
+            for (var i = 0; i < results.length; i++) {
+                var object = results[i];
+                userIds.push(object.get("userId"));
+                // alert(object.id + ' - ' + object.get('userId'));
+                // console.log(object.id + ' - ' + object.get('userId'));
+                console.log('\n' + 'found user: ' + object.get("userId"));
+            }
+
+            console.log('user Ids were: ' + userIds);
+            var query = new Parse.Query("_Installation");
+            query.containedIn("userId", userIds);
+            Parse.Push.send({
+                where: query,
+                // Parse.Push requires a dictionary, not a string.
+                data: {"alert": competitorName + "'s event " + eventName +
+                                " in tournament " + tournamentName + " has changed"}
+            }, { success: function() {
+                console.log("#### PUSH OK");
+            }, error: function(error) {
+                console.log("#### PUSH ERROR" + error.message);
+            }, useMasterKey: true});
+        },
+        error: function(error) {
+            // alert("Error: " + error.code + " " + error.message);
+            console.log('Error: ' + error.code + " " + error.message);
+        }
+    });
 
     response.success('success');
 });
