@@ -48,39 +48,30 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
     var eventId = jsonData.eventId;
     var eventName = jsonData.eventName;
     // Failed attempt
-    // var userQuery = new Parse.Query(Parse.AppUser);
-    // userQuery.equalTo("followedEvents", eventId);
-    // userQuery.find({
-    //     success: function(results) {
-    //         var userIds = [];
-    //         for (var i = 0; i < results.length; i++) {
-    //             var object = results[i];
-    //             userIds.push(object.get("userId"));
-    //             // alert(object.id + ' - ' + object.get('playerName'));
-    //         }
-    //
-    //         var query = new Parse.Query(Parse.Installation);
-    //         // query.containedIn("userId", userIds);
-    //         query.containedIn("userId", ["101577857790860295282", "106250754053988585495"]);
-    //
-    //         Parse.Push.send({
-    //             where: query,
-    //             // Parse.Push requires a dictionary, not a string.
-    //             data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
-    //         }, { success: function() {
-    //             console.log("#### PUSH OK");
-    //         }, error: function(error) {
-    //             console.log("#### PUSH ERROR" + error.message);
-    //         }, useMasterKey: true});
-    //
-    //     },
-    //     error: function(error) {
-    //         // alert("Error: " + error.code + " " + error.message);
-    //     }
-    // });
+    var userQuery = new Parse.Query(Parse.AppUser);
+    userQuery.equalTo("followedEvents", eventId);
+    var userIds = [];
+    userQuery.find({
+        success: function(results) {
+            for (var i = 0; i < results.length; i++) {
+                var object = results[i];
+                userIds.push(object.get("userId"));
+                alert(object.id + ' - ' + object.get('playerName'));
+                console.log(object.id + ' - ' + object.get('playerName'));
+            }
+        },
+        error: function(error) {
+            alert("Error: " + error.code + " " + error.message);
+            console.log('Error: ' + error.code + " " + error.message);
+        }
+    });
+    console.log('user Ids were: ' + userIds);
+    var query = new Parse.Query(Parse.Installation);
+    query.containedIn("userId", userIds);
+    // query.containedIn("userId", ["101577857790860295282", "106250754053988585495"]);
 
     Parse.Push.send({
-        channels: ["Event: " + eventId],
+        where: query,
         // Parse.Push requires a dictionary, not a string.
         data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
     }, { success: function() {
@@ -88,6 +79,17 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
     }, error: function(error) {
         console.log("#### PUSH ERROR" + error.message);
     }, useMasterKey: true});
+
+    //This worked with channels
+    // Parse.Push.send({
+    //     channels: ["Event: " + eventId],
+    //     // Parse.Push requires a dictionary, not a string.
+    //     data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
+    // }, { success: function() {
+    //     console.log("#### PUSH OK");
+    // }, error: function(error) {
+    //     console.log("#### PUSH ERROR" + error.message);
+    // }, useMasterKey: true});
 
     // var query = new Parse.Query(Parse.Installation);
     // query.equalTo("installationId", sender);
