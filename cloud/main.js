@@ -53,6 +53,7 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
     var userIds = [];
     userQuery.find({
         success: function(results) {
+            console.log('results was: ' + results + '\n');
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
                 userIds.push(object.get("userId"));
