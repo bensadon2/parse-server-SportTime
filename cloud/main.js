@@ -57,10 +57,10 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
             var userIds = [];
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
-                userIds.push(object.get("userId"));
+                userIds.push(object.get("id"));
                 // alert(object.id + ' - ' + object.get('userId'));
                 // console.log(object.id + ' - ' + object.get('userId'));
-                console.log('\n' + 'found user: ' + object.get("userId"));
+                console.log('\n' + 'found user: ' + object.get("id"));
             }
 
             console.log('user Ids were: ' + userIds);
@@ -69,7 +69,7 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
             Parse.Push.send({
                 where: query,
                 // Parse.Push requires a dictionary, not a string.
-                data: {"alert": "Event " + eventName + " in tournament " + tournamentName + " has changed"}
+                data: {"alert": "Event \"" + eventName + "\" in tournament \"" + tournamentName + "\" has changed"}
             }, { success: function() {
                 console.log("#### PUSH OK");
             }, error: function(error) {
@@ -121,10 +121,10 @@ Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
             var userIds = [];
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
-                userIds.push(object.get("userId"));
+                userIds.push(object.get("id"));
                 // alert(object.id + ' - ' + object.get('userId'));
                 // console.log(object.id + ' - ' + object.get('userId'));
-                console.log('\n' + 'found user: ' + object.get("userId"));
+                console.log('\n' + 'found user: ' + object.get("id"));
             }
 
             console.log('user Ids were: ' + userIds);
@@ -133,8 +133,8 @@ Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
             Parse.Push.send({
                 where: query,
                 // Parse.Push requires a dictionary, not a string.
-                data: {"alert": competitorName + "'s event " + eventName +
-                                " in tournament " + tournamentName + " has changed"}
+                data: {"alert": competitorName + "'s event \"" + eventName +
+                                "\" in tournament \"" + tournamentName + "\" has changed"}
             }, { success: function() {
                 console.log("#### PUSH OK");
             }, error: function(error) {
