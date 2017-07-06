@@ -45,12 +45,19 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
 
     var jsonData = JSON.parse(customData);
     var tournamentName = jsonData.tournamentName;
+    var tournamentId = jsonData.tournamentId;
     var eventId = jsonData.eventId;
     var eventName = jsonData.eventName;
-    // Failed attempt
+    var year = jsonData.year;
+    var month = jsonData.month;
+    var dayOfMonth = jsonData.dayOfMonth;
+    var hour = jsonData.hour;
+    var minute = jsonData.minute;
+    var second = jsonData.second;
+
+
     var userQuery = new Parse.Query("AppUser");
     userQuery.equalTo("followedEvents", eventId);
-
     userQuery.find({
         success: function(results) {
             // console.log('results was: ' + results + '\n');
@@ -69,7 +76,16 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
             Parse.Push.send({
                 where: query,
                 // Parse.Push requires a dictionary, not a string.
-                data: {"alert": "Event \"" + eventName + "\" in tournament \"" + tournamentName + "\" has changed"}
+                data: {"alert": "Event \"" + eventName + "\" in tournament \"" + tournamentName + "\" has changed",
+                        "eventId": eventId,
+                        "tournamentId": tournamentId,
+                        "eventChanged": true,
+                        "year":year,
+                        "month":month,
+                        "dayOfMonth":dayOfMonth,
+                        "hour":hour,
+                        "minute":minute,
+                        "second":second}
             }, { success: function() {
                 console.log("#### PUSH OK");
             }, error: function(error) {
@@ -112,6 +128,16 @@ Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
     var competitorId = jsonData.competitorId;
     var competitorName = jsonData.competitorName;
     var eventName = jsonData.eventName;
+    var eventId = jsonData.eventId;
+    var tournamentId = jsonData.tournamentId;
+    var year = jsonData.year;
+    var month = jsonData.month;
+    var dayOfMonth = jsonData.dayOfMonth;
+    var hour = jsonData.hour;
+    var minute = jsonData.minute;
+    var second = jsonData.second;
+
+
     // Failed attempt
     var userQuery = new Parse.Query("AppUser");
     userQuery.equalTo("followedCompetitors", competitorId);
@@ -134,7 +160,17 @@ Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
                 where: query,
                 // Parse.Push requires a dictionary, not a string.
                 data: {"alert": competitorName + "'s event \"" + eventName +
-                                "\" in tournament \"" + tournamentName + "\" has changed"}
+                                "\" in tournament \"" + tournamentName + "\" has changed",
+                    "eventId": eventId,
+                    "tournamentId": tournamentId,
+                    "competitorName": competitorName,
+                    "competitorEventChanged": true,
+                    "year":year,
+                    "month":month,
+                    "dayOfMonth":dayOfMonth,
+                    "hour":hour,
+                    "minute":minute,
+                    "second":second}
             }, { success: function() {
                 console.log("#### PUSH OK");
             }, error: function(error) {
