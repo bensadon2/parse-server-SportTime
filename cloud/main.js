@@ -78,6 +78,8 @@ Parse.Cloud.define('pushEventChanged', function(request, response) {
                 // Parse.Push requires a dictionary, not a string.
                 data: {"alert": "Event \"" + eventName + "\" in tournament \"" + tournamentName + "\" has changed",
                         "eventId": eventId,
+                        "eventName": eventName,
+                        "tournamentName": tournamentName,
                         "tournamentId": tournamentId,
                         "eventChanged": true,
                         "year":year,
@@ -162,6 +164,8 @@ Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
                 data: {"alert": competitorName + "'s event \"" + eventName +
                                 "\" in tournament \"" + tournamentName + "\" has changed",
                     "eventId": eventId,
+                    "eventName": eventName,
+                    "tournamentName": tournamentName,
                     "tournamentId": tournamentId,
                     "competitorName": competitorName,
                     "competitorEventChanged": true,
