@@ -168,6 +168,7 @@ Parse.Cloud.define('pushCompetitorEventChanged', function(request, response) {
                     "tournamentName": tournamentName,
                     "tournamentId": tournamentId,
                     "competitorName": competitorName,
+                    "competitorId": competitorId,
                     "competitorEventChanged": true,
                     "year":year,
                     "month":month,
